@@ -45,6 +45,17 @@
                             {{ post.shot_description }}
                         </p>
                     </div>
+                    {# --- Галерея изображений в карточке поста --- #}
+                        <div class="post-image-gallery">
+                        {% for image in post.images.all %}
+                            <div class="gallery-item">
+                            <img src="{{ image.url }}" alt="{{ image.alt_text }}" title="{{ image.caption }}">
+                                {% if image.caption %}
+                                    <p class="image-caption">{{ image.caption }}</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        </div>
 
                     <!-- Основной текст статьи -->
                     <div class="article-content">

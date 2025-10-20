@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import F, Q, Case, CharField, Count, Max, Value, When
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -134,7 +134,16 @@ class DetailPost(LoginRequiredMixin, DetailView):
         context = self.get_context_data(form=form)
         return self.render_to_response(context=context)
 
+    def post_list(request):
+        posts = Post.objects.all()
+        return render(request, 'gamenews/post_list.html', {'posts': posts})
 
+    def post_detail(request, post_id):
+        post = get_object_or_404(Post, pk=post_id)
+        # post.images.all() получит все изображения, связанные с этим постом
+        print(post.images.all())
+        return render(request, 'gamenews/post_detail.html', {'post': post})
+    
 class AddPostView(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     form_class = AddPostForm
     template_name = "gamenews/form_add.html"
@@ -200,3 +209,5 @@ class CategoryDetailView(ListView):
         context["cat"] = Category.objects.get(slug=self.kwargs["slug"])
         context["title"] = context["cat"]
         return context
+
+

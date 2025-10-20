@@ -85,3 +85,39 @@ body {
   font-size: 20px;
   margin: 0 10px;
 }
+.post-image-gallery {
+  display: flex; /* Используем flexbox для расположения изображений */
+  flex-wrap: wrap; /* Позволяем картинкам переноситься на новую строку */
+  gap: 10px; /* Пространство между изображениями */
+  margin-top: 20px;
+  margin-bottom: 20px;
+  justify-content: center; /* Центрируем изображения */
+}
+.image-count {
+    font-size: 0.8em;
+    color: #888;
+    margin-left: 5px;
+}
+.gallery-item {
+  flex: 0 1 150px; /* Позволяем элементам расти, но не уменьшаться, максимальная ширина 150px */
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-radius: 5px;
+  overflow: hidden; /* Обрезаем все, что выходит за пределы */
+  background: #fff;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 120px; /* Фиксированная высота для единообразия */
+  object-fit: cover; /* Масштабируем изображение, чтобы оно покрывало область */
+  display: block; /* Убираем лишний пробел под изображением */
+}
+
+.gallery-item p.image-caption {
+  font-size: 0.8em;
+  color: #666;
+  padding: 5px;
+  margin: 0;
+  background: #f8f8f8;
+}

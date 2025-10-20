@@ -73,6 +73,21 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+class Image(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='images', verbose_name="Пост", null=True)
+    image = models.ImageField(upload_to='post_images/', verbose_name="Изображение")
+    caption = models.CharField(max_length=255, blank=True, verbose_name="Подпись к изображению")
+    alt_text = models.CharField(max_length=255, blank=True, verbose_name="Альтернативный текст (для SEO)")
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата загрузки")
+
+    def __str__(self):
+        return self.caption if self.caption else f"Изображение для поста {self.post.title}"
+
+    class Meta:
+        verbose_name = "Изображение поста"
+        verbose_name_plural = "Изображения поста"
+        ordering = ['uploaded_at'] # Сортировка изображений в посте
+
 
 class Comment(models.Model):
     text = models.TextField(verbose_name="Текст комментария")

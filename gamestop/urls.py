@@ -10,6 +10,7 @@ urlpatterns = [
     path('about/', About.as_view(), name='about'),
     path('', include('gamenews.urls')),
     path('user/', include('users.urls')),
+    path('posts/', include('gamenews.urls')),
 ]
 
 if settings.DEBUG:
