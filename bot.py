@@ -8,8 +8,8 @@ from aiogram.methods import DeleteWebhook
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from aiogram.filters import CommandStart, Command
 
-TOKEN = "8428944015:AAF7pJtFUrPCz_RhfpCI6rtddeKIQ2NArMM"
-ADMIN_CHAT_ID = 1053541053
+TOKEN = "7720562729:AAHyPG19QtnWpTW2lassZgWlVezOXt3vmok"
+ADMIN_CHAT_ID = 5064531565
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
@@ -17,7 +17,7 @@ dp = Dispatcher()
 
 @dp.message(CommandStart()) # /start
 async def cmd_start(message: Message):
-    await message.answer("Hello!")
+    await message.answer(message.from_user.id)
 
 @dp.message(Command('help')) # /help
 async def cmd_help(message: Message):

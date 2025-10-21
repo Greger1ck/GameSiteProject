@@ -1,0 +1,70 @@
+{% extends 'base.html' %} {# Предполагается, что у вас есть базовый шаблон #}
+{% load static %} {# Для загрузки статических файлов, если они нужны #}
+
+
+{% block style %}
+<link rel="stylesheet" href={% static "gamenews/css/post_list.css" %}>
+{% endblock %}
+
+{% block title %}Все посты{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Все посты</h1>
+
+    {# --- Фильтры --- #}
+    <div class="filters">
+        {# Фильтр по категориям #}
+        <div class="filter-group">
+            <h3>Категории</h3>
+            <a href="{% url 'post_list' %}" class="filter-link {% if not selected_category %}active{% endif %}">Все</a>
+            {% for category in categories %}
+                <a href="{% url 'post_list' %}?category={{ category.slug }}"
+                   class="filter-link {% if selected_category == category.name %}active{% endif %}">{{ category.title }}</a>
+            {% endfor %}
+        </div>
+
+        {# Фильтр по тегам #}
+        <div class="filter-group">
+            <h3>Теги</h3>
+            <form action="{% url 'post_list' %}" method="GET">
+                {% for tag in tags %}
+                    <label>
+                        <input type="checkbox" name="tag" value="{{ tag.slug }}"
+                               {% if tag.slug in selected_tags %}checked{% endif %}>
+                        {{ tag.title }}
+                    </label>
+                {% endfor %}
+                {# Скрытое поле для передачи выбранной категории, если она есть #}
+                {% if selected_category %}
+                    <input type="hidden" name="category" value="{{ selected_category }}">
+                {% endif %}
+                <button type="submit" class="apply-filters-button">Применить теги</button>
+            </form>
+        </div>
+    </div>
+
+    {# --- Список постов --- #}
+    <div class="post-list">
+        {% for post in posts %}
+            <div class="post-card">
+                <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+                <p class="post-meta">
+                    Категория: <a href="{% url 'post_list' %}?category={{ post.category.title }}">{{ post.category.title }}</a> |
+                    Теги:
+                    {% for tag in post.tag.all %}
+                        <a href="{% url 'post_list' %}?tag={{ tag.slug }}" class="tag-link">{{ tag.title }}</a>{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                </p>
+                <p style = "color:black;">Опубликовано: {{ post.created_at }}<br></p>
+                <p>{{ post.content|truncatewords:50 }}</p> {# Ограничиваем вывод контента #}
+                <a href="{{ post.get_absolute_url }}" class="read-more">Читать далее</a>
+            </div>
+        {% empty %}
+            <p>Пока нет опубликованных постов.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,150 @@
+/* Стили для контейнера, фильтров и списка постов */
+.container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap; /* Позволяем переноситься на новую строку */
+    gap: 30px; /* Пространство между группами фильтров */
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.filter-group h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: #000000;
+}
+
+.filter-group a, .filter-link {
+    display: block;
+    margin-bottom: 8px;
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.filter-group a:hover, .filter-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.filter-link.active {
+    font-weight: bold;
+    color: #0056b3;
+}
+
+/* Стили для чекбоксов тегов */
+.filter-group form label {
+    display: block;
+    margin-bottom: 8px;
+    cursor: pointer;
+    color: black;
+}
+
+.filter-group form input[type="checkbox"] {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.apply-filters-button {
+    display: block;
+    margin-top: 15px;
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.apply-filters-button:hover {
+    background-color: #0056b3;
+}
+
+
+.post-list {
+    margin-top: 20px;
+}
+
+.post-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    padding: 25px;
+    margin-bottom: 25px;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.post-card h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.8em;
+    color: #343a40;
+}
+
+.post-card h2 a {
+    color: #343a40;
+}
+
+.post-card h2 a:hover {
+    color: #007bff;
+}
+
+.post-meta {
+    font-size: 0.9em;
+    color: #6c757d;
+    margin-bottom: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px; /* Пространство между элементами метаданных */
+}
+
+.post-meta a {
+    color: #6c757d;
+    text-decoration: underline;
+}
+
+.post-meta a:hover {
+    color: #007bff;
+}
+
+.tag-link {
+    margin-left: 5px;
+    padding: 3px 8px;
+    background-color: #e0e0e0;
+    border-radius: 3px;
+    font-size: 0.8em;
+    color: #555;
+    transition: background-color 0.2s ease;
+}
+
+.tag-link:hover {
+    background-color: #c0c0c0;
+    color: #333;
+    text-decoration: none;
+}
+
+.read-more {
+    display: inline-block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.read-more:hover {
+    text-decoration: underline;
+}

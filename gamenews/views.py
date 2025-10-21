@@ -13,9 +13,9 @@ import requests
 import json
 
 from gamenews.forms import AddPostForm, CommentForm
-from gamenews.models import Category, Comment, Post
+from gamenews.models import Category, Comment, Post, Tag
 
-VSEGPT_KEY = "sk-or-vv-1e7dd726c90cd925576b27b03bb0307c77ad60b0c5f5072e20bb959363d47c8f"
+VSEGPT_KEY = "sk-or-vv-baa39a11afa2312de2d0521d678334d4dcb4cbedb8ea64aa1f606e42236270c2"
 
 def check_comment_with_AI(text):
 
@@ -211,3 +211,31 @@ class CategoryDetailView(ListView):
         return context
 
 
+def post_list(request):
+    # Получаем все категории и теги для отображения в фильтрах
+    categories = Category.objects.all()
+    tags = Tag.objects.all()
+
+    # Получаем все посты по умолчанию
+    posts = Post.objects.all()
+
+    # Получаем выбранную категорию из GET-параметров
+    category_slug = request.GET.get('category')
+    if category_slug:
+        posts = posts.filter(category__slug=category_slug)
+        print(posts)
+    # Получаем выбранные теги из GET-параметров
+    tag_ids = request.GET.getlist('tag') # getlist используется, потому что тегов может быть несколько
+    if tag_ids:
+        # Фильтруем по тегам. filter(pk__in=tag_ids) выбирает теги по их ID
+        # .distinct() удаляет дубликаты постов, если пост имеет несколько выбранных тегов
+        posts = posts.filter(tag__slug__in=tag_ids).distinct()
+
+    context = {
+        'posts': posts,
+        'categories': categories,
+        'tags': tags,
+        'selected_category': category_slug, # Передаем выбранную категорию в шаблон
+        'selected_tags': tag_ids,           # Передаем выбранные теги в шаблон
+    }
+    return render(request, 'gamenews/post_list.html', context)

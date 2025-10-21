@@ -14,7 +14,11 @@
     />
     <link rel="stylesheet" href={% static "gamenews/css/style.css" %}> <link
     href="{% static "gamenews/favicon.ico" %}" size="32x32" rel="icon">
+    {% block style %}
+    
+    {% endblock style %}
     <title>{{ title }}</title>
+
   </head>
   <body class="bg-dark">
     
