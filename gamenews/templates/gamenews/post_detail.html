@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static%}
 
 {% block content %}
 
@@ -49,7 +49,7 @@
                         <div class="post-image-gallery">
                         {% for image in post.images.all %}
                             <div class="gallery-item">
-                            <img src="{{ image.url }}" alt="{{ image.alt_text }}" title="{{ image.caption }}">
+                            <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" title="{{ image.caption }}" onclick="openModal('{{ image.image.url }}', '{{ image.alt_text }}')">
                                 {% if image.caption %}
                                     <p class="image-caption">{{ image.caption }}</p>
                                 {% endif %}
@@ -223,5 +223,12 @@
             </div>
         </div>
     </div>
+
+    <div id="modal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modal-image">
+        <div id="caption"></div>
+    </div>
+    <script src="{% static 'js/scripts.js' %}"></script>
 
 {% endblock content %}
