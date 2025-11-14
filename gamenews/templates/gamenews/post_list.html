@@ -1,70 +1,184 @@
-{% extends 'base.html' %} {# Предполагается, что у вас есть базовый шаблон #}
-{% load static %} {# Для загрузки статических файлов, если они нужны #}
-
+{% extends 'base.html' %}
+{% load static %}
 
 {% block style %}
-<link rel="stylesheet" href={% static "gamenews/css/post_list.css" %}>
+<link rel="stylesheet" href="{% static 'gamenews/css/post_list.css' %}">
 {% endblock %}
 
 {% block title %}Все посты{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Все посты</h1>
-
-    {# --- Фильтры --- #}
-    <div class="filters">
-        {# Фильтр по категориям #}
-        <div class="filter-group">
-            <h3>Категории</h3>
-            <a href="{% url 'post_list' %}" class="filter-link {% if not selected_category %}active{% endif %}">Все</a>
-            {% for category in categories %}
-                <a href="{% url 'post_list' %}?category={{ category.slug }}"
-                   class="filter-link {% if selected_category == category.name %}active{% endif %}">{{ category.title }}</a>
-            {% endfor %}
-        </div>
-
-        {# Фильтр по тегам #}
-        <div class="filter-group">
-            <h3>Теги</h3>
-            <form action="{% url 'post_list' %}" method="GET">
-                {% for tag in tags %}
-                    <label>
-                        <input type="checkbox" name="tag" value="{{ tag.slug }}"
-                               {% if tag.slug in selected_tags %}checked{% endif %}>
-                        {{ tag.title }}
-                    </label>
-                {% endfor %}
-                {# Скрытое поле для передачи выбранной категории, если она есть #}
-                {% if selected_category %}
-                    <input type="hidden" name="category" value="{{ selected_category }}">
-                {% endif %}
-                <button type="submit" class="apply-filters-button">Применить теги</button>
-            </form>
-        </div>
-    </div>
-
-    {# --- Список постов --- #}
-    <div class="post-list">
-        {% for post in posts %}
-            <div class="post-card">
-                <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
-                <p class="post-meta">
-                    Категория: <a href="{% url 'post_list' %}?category={{ post.category.title }}">{{ post.category.title }}</a> |
-                    Теги:
-                    {% for tag in post.tag.all %}
-                        <a href="{% url 'post_list' %}?tag={{ tag.slug }}" class="tag-link">{{ tag.title }}</a>{% if not forloop.last %},{% endif %}
-                    {% endfor %}
-                </p>
-                <p style = "color:black;">Опубликовано: {{ post.created_at }}<br></p>
-                <p>{{ post.content|truncatewords:50 }}</p> {# Ограничиваем вывод контента #}
-                <a href="{{ post.get_absolute_url }}" class="read-more">Читать далее</a>
-            </div>
-        {% empty %}
-            <p>Пока нет опубликованных постов.</p>
+<div class="container-xxl postlist-wrap">
+  <header class="postlist-header">
+    <h1 class="exo text-light">Все посты</h1>
+    {% if selected_category or selected_tags %}
+      <div class="applied-filters">
+        {% if selected_category %}
+          <span class="pill pill--gold">
+            Категория: {{ selected_category_title|default:selected_category }}
+          </span>
+        {% endif %}
+        {% for t in selected_tags %}
+          <span class="pill">
+            #{{ t }}
+          </span>
         {% endfor %}
+        <a href="{% url 'post_list' %}" class="clear-link">Сбросить</a>
+      </div>
+    {% endif %}
+  </header>
+
+
+<details id="filters" class="filters glass collapsible" open>
+  <summary class="filters__summary">
+    <i class="fa-solid fa-filter me-2"></i>
+    Фильтры
+    <span class="filters__summary-hint">
+
+    </span>
+    <span class="chevron" aria-hidden="true"></span>
+  </summary>
+
+
+  <div class="filters__content">
+
+    <div class="filter-group">
+      <h3 class="exo">Категории</h3>
+      <div class="pill-row">
+        <a href="{% url 'post_list' %}"
+           class="pill {% if not selected_category %}is-active{% endif %}">Все</a>
+        {% for category in categories %}
+          <a href="{% url 'post_list' %}?category={{ category.slug }}"
+             class="pill {% if selected_category == category.slug %}is-active{% endif %}">
+            {{ category.title }}
+          </a>
+        {% endfor %}
+      </div>
     </div>
+
+
+    <div class="filter-group">
+      <h3 class="exo">Теги</h3>
+      <form action="{% url 'post_list' %}" method="GET" class="tags-form">
+        {% if selected_category %}
+          <input type="hidden" name="category" value="{{ selected_category }}">
+        {% endif %}
+
+        <div class="tag-check-grid">
+          {% for tag in tags %}
+            <label class="tag-check">
+              <input type="checkbox" name="tag" value="{{ tag.slug }}"
+                     {% if tag.slug in selected_tags %}checked{% endif %}>
+              <span class="check-ui"># {{ tag.title }}</span>
+            </label>
+          {% endfor %}
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn-apply exo">
+            <i class="fa-solid fa-filter me-2"></i>Применить теги
+          </button>
+          <a class="btn-reset" href="{% url 'post_list' %}{% if selected_category %}?category={{ selected_category }}{% endif %}">
+            Сбросить теги
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</details>
+
+
+  <section class="posts">
+    <div class="row g-4">
+      {% for post in posts %}
+        {% include "gamenews/include_post.html" with post=post %}
+      {% empty %}
+        <div class="col-12">
+          <div class="empty glass">
+            <h3 class="exo">Пока нет опубликованных постов</h3>
+            <p>Попробуйте изменить фильтры выше.</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+
+  {% if is_paginated %}
+    <nav class="paginator-wrap">
+      <div class="paginator glass">
+        {% if page_obj.has_previous %}
+          <a class="paginator__nav"
+             href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span class="d-none d-sm-inline ms-2">Назад</span>
+          </a>
+        {% endif %}
+
+        <div class="paginator__pages">
+          {% for p in paginator.page_range %}
+            {% if p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+              <a class="paginator__page {% if page_obj.number == p %}is-current{% endif %}"
+                 href="?page={{ p }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}">
+                {{ p }}
+              </a>
+            {% elif p == 1 or p == paginator.num_pages %}
+              <a class="paginator__page"
+                 href="?page={{ p }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}">
+                {{ p }}
+              </a>
+            {% elif p == page_obj.number|add:-3 or p == page_obj.number|add:3 %}
+              <span class="paginator__gap">…</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        {% if page_obj.has_next %}
+          <a class="paginator__nav"
+             href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% for t in selected_tags %}&tag={{ t }}{% endfor %}">
+            <span class="d-none d-sm-inline me-2">Вперёд</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        {% endif %}
+      </div>
+    </nav>
+  {% endif %}
 </div>
+<script>
+  (function () {
+    const root = document.getElementById('filters');
+    if (!root) return;
+
+
+    const key = 'postlist:filters:open';
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved === '0') root.removeAttribute('open');
+      if (saved === '1') root.setAttribute('open', '');
+    } catch(e){}
+
+    root.addEventListener('toggle', () => {
+      try { localStorage.setItem(key, root.open ? '1' : '0'); } catch(e){}
+    });
+
+
+    const hint = root.querySelector('.filters__summary-hint');
+    const form = root.querySelector('.tags-form');
+    const params = new URLSearchParams(window.location.search);
+
+    function updateHint(){
+      const checked = form ? form.querySelectorAll('input[name="tag"]:checked').length : 0;
+      const cat = params.get('category');
+      const catText = cat ? `категория: ${cat}` : 'все категории';
+      const tagText = checked ? `, тегов: ${checked}` : '';
+      hint.textContent = `${catText}${tagText}`;
+    }
+
+    if (form) {
+      form.addEventListener('change', updateHint);
+    }
+    updateHint();
+  })();
+</script>
+
 {% endblock %}
-
-

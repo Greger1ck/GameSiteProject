@@ -86,7 +86,7 @@ class Image(models.Model):
     class Meta:
         verbose_name = "Изображение поста"
         verbose_name_plural = "Изображения поста"
-        ordering = ['uploaded_at'] # Сортировка изображений в посте
+        ordering = ['uploaded_at'] 
 
 
 class Comment(models.Model):

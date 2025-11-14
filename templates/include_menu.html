@@ -38,7 +38,7 @@
 
                 <form action="{% url 'users:logout' %}" method="post">
                   {% csrf_token %}
-                  <button type="submit" class="btn btn-warning">Выйти {{ user.username }}</button>
+                  <button type="submit"  class="nav-link">Выйти {{ user.username }}</button>
                 </form>
                 
               {% else %}
@@ -58,7 +58,7 @@
 
             {% if user.is_authenticated and user.is_staff %}
               <li class="nav-item ms-3">
-                <a class="btn btn-danger" href="{% url "admin:index" %}">
+                <a class="nav-link"  href="{% url "admin:index" %}">
                   АДМИНКА
                   </a>
               </li>

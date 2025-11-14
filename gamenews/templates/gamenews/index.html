@@ -1,74 +1,103 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 
+<style>
+  .hero--with-bg{
+    background-image: url('{% static "img/bar.jpg" %}');
+  }
+</style>
 
-<div class="glass search p-1 w-75 mx-auto">
-      <form
-        action=""
-        method="GET"
-        class="px-5 my-2 mx-auto w-100 d-flex justify-content-center"
-      >
-        <label for="search" class="exo text-light me-3">Поиск</label>
-        <input
-          type="text"
-          name="search"
-          id="search"
-          class="glass px-2 text-light exo w-50"
-          style="margin: 0; flex: 1"
-        />
-        <button type="submit" class="glass m-0 text-light px-4 ms-3 exo">
-          Искать
-        </button>
-      </form>
-    </div>
 
-<div class="container mt-4 text-light">
+<section class="hero hero--with-bg">
+  <div class="hero__overlay"></div>
+  <div class="hero__inner">
+    <h1 class="hero__title exo">Свежие новости игр и индустрии</h1>
+    <p class="hero__subtitle">
+      Анонсы, обзоры, инсайды и аналитика — всё в одном месте. Выбирай, что интересно, и ныряй глубже.
+    </p>
+  </div>
+</section>
+
+
+
+<div class="search-wrap container-xxl">
+  <form action="" method="GET" class="search glass">
+    <label for="search" class="search__label exo">Поиск</label>
+    <input
+      type="text"
+      name="search"
+      id="search"
+      class="search__input exo"
+      placeholder="Введите название игры, студии или темы…"
+      value="{{ search|default:'' }}"
+    />
+    <button type="submit" class="search__btn exo">
+      <i class="fa-solid fa-magnifying-glass me-2"></i> Искать
+    </button>
+  </form>
 
   {% if search %}
-  <p>
-    По вашему запросу <span class="text-warning">{{search}}</span> найдено {{count}} записи:
-  </p>
+    <p class="search__result">
+      По запросу <span class="accent">{{ search }}</span> найдено {{ count }} {{ count|pluralize:"запись,записи,записей" }}.
+    </p>
   {% endif %}
-
-      <!-- Карточки рецептов -->
-      <div class="row g-4">
-        <!-- Карточка 1 -->
-        {% for item in posts %}
-        
-        
-          {% include "gamenews/include_post.html" with post=item %}
-        
-        {% endfor %}
+</div>
 
 
-
+<div class="container-xxl posts">
+  <div class="row g-4">
+    {% for item in posts %}
+      {% include "gamenews/include_post.html" with post=item %}
+    {% empty %}
+      <div class="col-12">
+        <div class="empty glass">
+          <h3 class="exo">Ничего не найдено</h3>
+          <p>Попробуйте изменить запрос или посмотреть свежие публикации без фильтров.</p>
+        </div>
       </div>
-    </div>
+    {% endfor %}
+  </div>
+</div>
 
-    
 
+{% if is_paginated %}
+  <nav class="paginator-wrap">
     <div class="paginator glass">
       {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{search}}{% endif %}"><i class="fa-solid fa-arrow-left  mx-2"></i></a>
+        <a class="paginator__nav" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{search}}{% endif %}">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span class="d-none d-sm-inline ms-2">Назад</span>
+        </a>
       {% endif %}
 
-      {% for p in paginator.page_range %}
-        {% if p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
-          <a href="?page={{p}}{% if search %}&search={{search}}{% endif %}" 
-          {% if page_obj.number == p %} class="text-warning" {% endif %}
-          >{{ p }}</a>
-        {% endif %}
-      {% endfor %}
-      
+      <div class="paginator__pages">
+        {% for p in paginator.page_range %}
+          {% if p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+            <a class="paginator__page {% if page_obj.number == p %}is-current{% endif %}"
+               href="?page={{ p }}{% if search %}&search={{search}}{% endif %}">
+              {{ p }}
+            </a>
+          {% elif p == 1 or p == paginator.num_pages %}
+            <a class="paginator__page"
+               href="?page={{ p }}{% if search %}&search={{search}}{% endif %}">
+              {{ p }}
+            </a>
+          {% elif p == page_obj.number|add:-3 or p == page_obj.number|add:3 %}
+            <span class="paginator__gap">…</span>
+          {% endif %}
+        {% endfor %}
+      </div>
+
       {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}{% if search %}&search={{search}}{% endif %}"><i class="fa-solid fa-arrow-right  mx-2"></i></a>
+        <a class="paginator__nav" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{search}}{% endif %}">
+          <span class="d-none d-sm-inline me-2">Вперёд</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
       {% endif %}
-     
     </div>
+  </nav>
+{% endif %}
 
-  
-
-    {% endblock content %}
-
-
+{% endblock content %}

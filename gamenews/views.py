@@ -140,7 +140,7 @@ class DetailPost(LoginRequiredMixin, DetailView):
 
     def post_detail(request, post_id):
         post = get_object_or_404(Post, pk=post_id)
-        # post.images.all() получит все изображения, связанные с этим постом
+
         print(post.images.all())
         return render(request, 'gamenews/post_detail.html', {'post': post})
     
@@ -212,30 +212,29 @@ class CategoryDetailView(ListView):
 
 
 def post_list(request):
-    # Получаем все категории и теги для отображения в фильтрах
+
     categories = Category.objects.all()
     tags = Tag.objects.all()
 
-    # Получаем все посты по умолчанию
+
     posts = Post.objects.all()
 
-    # Получаем выбранную категорию из GET-параметров
+
     category_slug = request.GET.get('category')
     if category_slug:
         posts = posts.filter(category__slug=category_slug)
         print(posts)
-    # Получаем выбранные теги из GET-параметров
-    tag_ids = request.GET.getlist('tag') # getlist используется, потому что тегов может быть несколько
+
+    tag_ids = request.GET.getlist('tag')
     if tag_ids:
-        # Фильтруем по тегам. filter(pk__in=tag_ids) выбирает теги по их ID
-        # .distinct() удаляет дубликаты постов, если пост имеет несколько выбранных тегов
+
         posts = posts.filter(tag__slug__in=tag_ids).distinct()
 
     context = {
         'posts': posts,
         'categories': categories,
         'tags': tags,
-        'selected_category': category_slug, # Передаем выбранную категорию в шаблон
-        'selected_tags': tag_ids,           # Передаем выбранные теги в шаблон
+        'selected_category': category_slug, 
+        'selected_tags': tag_ids,           
     }
     return render(request, 'gamenews/post_list.html', context)

@@ -1,44 +1,47 @@
-<a class="col-lg-4 col-md-6 text-decoration-none" href="{% url "post" post.slug %}">
-            <div class="card recipe-card h-100 shadow-sm">
+<div class="col-lg-4 col-md-6 col-sm-12">
+  <article class="news-card h-100 d-flex flex-column position-relative">
 
-              {% if post.anons_picture %}
-                <img
-                  src="{{post.anons_picture.url}}"
-                  class="card-img-top recipe-image"
-                  alt="{{post.title}}"
-                />
-              {% endif %}
 
-              <div class="card-body d-flex flex-column">
-                <h5 class="card-title text-truncate">
-                  {{ post.title }}
-                </h5>
+    {% if post.anons_picture %}
+      <div class="news-card__media">
+        <img
+          src="{{ post.anons_picture.url }}"
+          alt="{{ post.title }}"
+          class="news-card__image"
+          loading="lazy"
+        />
+      </div>
+    {% endif %}
 
-                <div class="recipe-ingredients mb-3">
-                  <p class="small text-muted exo">
-                    {{ post.shot_description }}
-                  </p>
-                </div>
+    <div class="content d-flex flex-column flex-grow-1">
+      <h3 class="exo text-truncate">{{ post.title }}</h3>
 
-                <div class="recipe-meta mt-auto">
-                  <div
-                    class="d-flex justify-content-between align-items-end mb-2"
-                  >
-                    <div class="tag_line">
 
-                      {% for tag in post.tag.all %}
-                        <span class="badge tag_color">{{ tag.title }}</span>
-                      {% endfor %}
-                      
+      <p class="mb-3 news-card__desc">
+        {{ post.shot_description }}
+      </p>
 
-                    </div>
-                  </div>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted exo">{{ post.author.username|default:"Неизвестно" }}</small>
-                    <small class="text-muted"> {{ post.published_date }} </small>
-                    <small class="text-muted"> {{ post.rat }} </small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </a>
+
+      <div class="tag_line mb-2">
+        {% for tag in post.tag.all %}
+          <span class="tag"><i class="fa-solid fa-hashtag"></i>{{ tag.title }}</span>
+        {% endfor %}
+      </div>
+
+      <div class="meta d-flex justify-content-between align-items-center w-100">
+        <small class="exo">
+          <i class="fa-regular fa-user me-1"></i>{{ post.author.username|default:"Неизвестно" }}
+        </small>
+        <small>
+          <i class="fa-regular fa-calendar me-1"></i>{{ post.published_date|date:"d.m.Y" }}
+        </small>
+        <small>
+          <i class="fa-regular fa-star me-1"></i>{{ post.rat }}
+        </small>
+      </div>
+    </div>
+
+
+    <a href="{% url 'post' post.slug %}" class="stretched-link" aria-label="{{ post.title }}"></a>
+  </article>
+</div>
